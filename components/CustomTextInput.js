@@ -3,34 +3,48 @@ import PropTypes from "prop-types";
 import { TextInput, View, Text, StyleSheet } from "react-native";
 
 class CustomTextInput extends Component {
-  constructor(props) {
-    super(props);
-    // Bind the onChangeText method to the component instance
-    //this.onChangeText = this.onChangeText.bind(this);
-  }
-
   render() {
     const {
       label,
-      value,
-      onChangeText,
-      placeholder,
-      secureTextEntry,
-      keyboardType,
+      labelStyle,
+      maxLength,
+      textInputStyle,
+      stateHolder,
       stateFieldName,
+      onChangeText, // New prop for custom change handler
+      error, // New prop for error message
+      ...props // Capture any other props
     } = this.props;
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.label}>{label}</Text>
+      <View style={{ marginBottom: 10 }}>
+        <Text style={[styles.fieldLabel, labelStyle]}>{label}</Text>
         <TextInput
-          style={styles.input}
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          secureTextEntry={secureTextEntry}
-          keyboardType={keyboardType}
+          maxLength={maxLength}
+          onChangeText={(inText) => {
+            // Update state through stateHolder
+            stateHolder.setState(() => {
+              const obj = {};
+              obj[stateFieldName] = inText;
+              return obj;
+            });
+            // Call custom onChangeText if provided
+            if (onChangeText) {
+              onChangeText(inText);
+            }
+          }}
+          style={[
+            styles.textInput,
+            textInputStyle,
+            error ? { borderColor: 'red', borderWidth: 1 } : {}
+          ]}
+          {...props} // Spread any additional props
         />
+        {error && (
+          <Text style={{ color: 'red', marginLeft: 10, fontSize: 12 }}>
+            {error}
+          </Text>
+        )}
       </View>
     );
   }
@@ -38,13 +52,15 @@ class CustomTextInput extends Component {
 
 CustomTextInput.propTypes = {
   label: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  onChangeText: PropTypes.func.isRequired,
-  placeholder: PropTypes.string,
-  secureTextEntry: PropTypes.bool,
-  keyboardType: PropTypes.string,
+  labelStyle: PropTypes.object,
+  maxLength: PropTypes.number,
+  textInputStyle: PropTypes.object,
+  stateHolder: PropTypes.object.isRequired,
   stateFieldName: PropTypes.string.isRequired,
+  onChangeText: PropTypes.func, // New prop type
+  error: PropTypes.string // New prop type for error message
 };
+
 
 CustomTextInput.defaultProps = {
   placeholder: "",
