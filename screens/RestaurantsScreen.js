@@ -13,7 +13,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { createStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import { Root, Toast } from "@gluestack-ui/themed-native-base";
 import Constants from "expo-constants";
 
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const RestaurantsScreen = StackNavigator(
+const RestaurantsScreen = createStackNavigator(
   /* ---------- Routes. ---------- */
   {
     ListScreen: { screen: ListScreen },
